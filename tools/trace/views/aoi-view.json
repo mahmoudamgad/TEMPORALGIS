@@ -1,0 +1,56 @@
+{
+ "xmin": 3524820.4775034646,
+ "ymin": 3499371.486510429,
+ "xmax": 3528159.8201767616,
+ "ymax": 3502715.606497993,
+ "wkid": 102100,
+ "width": 1398,
+ "height": 1400,
+ "zoom": 16,
+ "center": [
+  31.679,
+  29.9805
+ ],
+ "captures": [
+  {
+   "epoch": 201801,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-201801.png"
+  },
+  {
+   "epoch": 201910,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-201910.png"
+  },
+  {
+   "epoch": 202007,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202007.png"
+  },
+  {
+   "epoch": 202102,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202102.png"
+  },
+  {
+   "epoch": 202206,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202206.png"
+  },
+  {
+   "epoch": 202211,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202211.png"
+  },
+  {
+   "epoch": 202308,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202308.png"
+  },
+  {
+   "epoch": 202408,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202408.png"
+  },
+  {
+   "epoch": 202509,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202509.png"
+  },
+  {
+   "epoch": 202609,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\aoi-202609.png"
+  }
+ ]
+}

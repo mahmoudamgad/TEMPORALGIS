@@ -1,0 +1,160 @@
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-row">
+      <div class="brand-icon">◈</div>
+      <div>
+        <div class="brand">TEMPORAL<span>GIS</span></div>
+        <div class="tagline">Spatial change explorer / Demo workspace</div>
+      </div>
+    </div>
+    <div class="top-meta"><span class="live-dot"></span> FRONTEND-ONLY POC <span class="top-pill">{{ features().length }} assets</span></div>
+  </header>
+
+  <section class="intro">
+    <div>
+      <div class="kicker">MULTI-EPOCH SPATIAL COMPARISON</div>
+      <h1>See what changed. <em>Where it changed.</em></h1>
+      <p>Explore the same geographic extent in two epochs. Move either map to synchronize the other and inspect predefined transparent change polygons.</p>
+    </div>
+    <div class="project-status"><span>●</span> {{ scene() === 'satellite' ? 'Real imagery, static polygons' : 'Synthetic dataset' }} <small>Predefined changes, not an automated detection result</small></div>
+  </section>
+
+  <section class="toolbar" aria-label="Map controls">
+    <div class="control-group">
+      <label class="control-label">VIEW MODE</label>
+      <div class="segmented">
+        <button type="button" [class.active]="mode() === '2d'" (click)="setMode('2d')">▦ &nbsp;2D</button>
+        <button type="button" [class.active]="mode() === '3d'" (click)="setMode('3d')">◈ &nbsp;3D</button>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label">SOURCE</label>
+      <div class="segmented">
+        <button type="button" [class.active]="scene() === 'satellite'" (click)="setScene('satellite')">◉ &nbsp;Satellite</button>
+        <button type="button" [class.active]="scene() === 'images'" (click)="setScene('images')">▤ &nbsp;Images</button>
+        <button type="button" [class.active]="scene() === 'loadtest'" (click)="setScene('loadtest')">▦ &nbsp;Load test 20K</button>
+      </div>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <button type="button" class="button-pill" [class.toggle-on]="linked()" (click)="toggleSync()">{{ linked() ? '⛓ SYNC ON' : '⛓ SYNC OFF' }}</button>
+    <button type="button" class="button-pill" (click)="resetView()">↗ Reset view</button>
+  </section>
+
+  @if (error()) { <div role="alert" class="error">Map initialization failed: {{ error() }}</div> }
+  <div class="workspace">
+    <main class="comparison">
+      <div class="two-maps">
+        <section class="map-card">
+          <div class="map-toolbar">
+            <div><span class="panel-label"><span class="circle cyan"></span> BASELINE EPOCH</span><div class="panel-sub">Older state / spatial reference</div></div>
+            <div class="epoch-picker">
+              <select aria-label="Baseline month" [ngModel]="monthOf(leftEpoch())" (ngModelChange)="setMonth('left',$event)">
+                @for (m of monthOptions('left'); track m.month) { <option [ngValue]="m.month" [disabled]="!m.available">{{ m.label }}</option> }
+              </select>
+              <select aria-label="Baseline year" [ngModel]="yearOf(leftEpoch())" (ngModelChange)="setYear('left',$event)">
+                @for (year of years(); track year) { <option [ngValue]="year">{{ year }}</option> }
+              </select>
+            </div>
+          </div>
+          <div class="map-viewport">
+            <div #leftCanvas class="map-canvas"></div>
+            <div class="view-badge">{{mode().toUpperCase()}} · {{sceneLabel()}}</div>
+            @if (scene() === 'loadtest') { <div class="fps-badge">{{fps()}} FPS</div> }
+            @if (busy()) { <div class="loading">Loading {{mode().toUpperCase()}} maps…</div> }
+          </div>
+          <div class="map-footer"><span>Features <strong>{{ visibleLeft() }}</strong></span><span>{{ imageryNote('left') }}</span><span>Epoch <strong>{{ label(leftEpoch()) }}</strong></span></div>
+        </section>
+
+        <section class="map-card">
+          <div class="map-toolbar">
+            <div><span class="panel-label"><span class="circle purple"></span> COMPARISON EPOCH</span><div class="panel-sub">Updated state / tracked changes</div></div>
+            <div class="epoch-picker">
+              <select aria-label="Comparison month" [ngModel]="monthOf(rightEpoch())" (ngModelChange)="setMonth('right',$event)">
+                @for (m of monthOptions('right'); track m.month) { <option [ngValue]="m.month" [disabled]="!m.available">{{ m.label }}</option> }
+              </select>
+              <select aria-label="Comparison year" [ngModel]="yearOf(rightEpoch())" (ngModelChange)="setYear('right',$event)">
+                @for (year of years(); track year) { <option [ngValue]="year">{{ year }}</option> }
+              </select>
+            </div>
+          </div>
+          <div class="map-viewport">
+            <div #rightCanvas class="map-canvas"></div>
+            <div class="view-badge">{{mode().toUpperCase()}} · {{sceneLabel()}}</div>
+            @if (scene() === 'loadtest') { <div class="fps-badge">{{fps()}} FPS</div> }
+            @if (busy()) { <div class="loading">Loading {{mode().toUpperCase()}} maps…</div> }
+          </div>
+          <div class="map-footer"><span>Features <strong>{{ visibleRight() }}</strong></span><span>{{ imageryNote('right') }}</span><span>Epoch <strong>{{ label(rightEpoch()) }}</strong></span></div>
+        </section>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-title"><strong>Multi-epoch timeline</strong><span>Months with new imagery. Click to set:</span>
+          <div class="timeline-target">
+            <button type="button" [class.active]="timelineTarget() === 'left'" (click)="timelineTarget.set('left')">Baseline</button>
+            <button type="button" [class.active]="timelineTarget() === 'right'" (click)="timelineTarget.set('right')">Comparison</button>
+          </div>
+        </div>
+        <div class="year-track">
+          @for (item of timeline(); track item.epoch) {
+            <button type="button" [class.selected]="item.epoch === stopOf(rightEpoch())" [class.baseline]="item.epoch === stopOf(leftEpoch())" [class.year-start]="item.firstOfYear"
+              [title]="label(item.epoch)" (click)="pickTimelineEpoch(item.epoch)">
+              <span class="track-dot"></span><strong>{{item.month}}</strong>
+              <span class="track-year">{{item.firstOfYear ? item.year : ''}}</span>
+              <span class="track-count">{{item.changes === null ? '' : item.changes + ' changes'}}</span>
+            </button>
+          }
+        </div>
+        <div class="timeline-actions">
+          <button type="button" class="next-button" (click)="togglePlay()">{{ playing() ? '❚❚ Pause' : '▶ Play' }}</button>
+          <button type="button" class="next-button" (click)="nextEpoch()">Next epoch →</button>
+        </div>
+      </div>
+      <div class="hints"><span>⌖ Pan, zoom & rotate either map</span><span>◈ In 3D, tilt / orbit is synchronized</span><span>◇ {{ scene() === 'satellite' ? 'Dates are Wayback release dates, not capture dates' : 'Synthetic footprints and dates' }}</span></div>
+    </main>
+
+    <aside class="inspector">
+      <div class="inspector-title"><div><div class="kicker">CHANGE INTELLIGENCE</div><h2>Change explorer</h2></div><div class="inspector-count">{{ viewportChanges().length }}</div></div>
+      <div class="period">{{label(leftEpoch())}} <span>→</span> {{label(rightEpoch())}} <small>{{ viewportChanges().length }} of {{ changes().length }} changes in view</small></div>
+      <div class="stats">
+        <button type="button" class="stat green" (click)="setFilter('added')"><span>New</span><strong>{{count().added}}</strong></button>
+        <button type="button" class="stat red" (click)="setFilter('removed')"><span>Removed</span><strong>{{count().removed}}</strong></button>
+        <button type="button" class="stat amber" (click)="setFilter('modified')"><span>Modified</span><strong>{{count().modified}}</strong></button>
+      </div>
+      <div class="layer-options">
+        <label><input type="checkbox" [checked]="showChanges()" (change)="toggleChanges()"/> Transparent change polygons</label>
+        <label><input type="checkbox" [checked]="showBuildings()" (change)="toggleBuildings()"/> Building footprints / 3D volumes</label>
+      </div>
+      <div class="list-title"><strong>Visible changes <span class="mock-label">PREDEFINED</span></strong><button type="button" (click)="setFilter('all')">Show all</button></div>
+      <div class="filters">
+        <button type="button" [class.active]="changeFilter() === 'all'" (click)="setFilter('all')">All</button>
+        <button type="button" [class.active]="changeFilter() === 'added'" (click)="setFilter('added')">Added</button>
+        <button type="button" [class.active]="changeFilter() === 'removed'" (click)="setFilter('removed')">Removed</button>
+        <button type="button" [class.active]="changeFilter() === 'modified'" (click)="setFilter('modified')">Modified</button>
+      </div>
+      <div class="change-list" role="list">
+        @for (change of listedChanges(); track change.id) {
+          <button type="button" role="listitem" class="change-row" [class.chosen]="selectedId() === change.id" (click)="selectChange(change)">
+            <span class="color-bar" [class]="change.kind"></span>
+            <span class="change-info"><strong>{{change.name}}</strong><small>{{change.id}} · {{change.category}}</small></span>
+            <span class="change-tag" [class]="change.kind">{{change.kind}}</span>
+          </button>
+        } @empty {
+          <div class="empty">{{ changes().length ? changes().length + ' changes in this period are outside the view. Zoom out or pan.' : 'No changes in this period / filter.' }}</div>
+        }
+      </div>
+      @if (filteredChanges().length > listLimit) { <div class="list-note">Showing first {{listLimit}} of {{filteredChanges().length}}. Zoom in to narrow the list.</div> }
+      @if (selectedChange(); as selected) {
+        <div class="selection-detail">
+          <span class="kicker">SELECTED FEATURE</span>
+          <h3>{{selected.name}}</h3>
+          <p>{{selected.id}} · {{selected.category}}</p>
+          <div><span>Type</span><strong>{{selected.kind}}</strong></div>
+          <div><span>Baseline height</span><strong>{{selected.before?.revision?.height ?? '—'}} m</strong></div>
+          <div><span>Compared height</span><strong>{{selected.after?.revision?.height ?? '—'}} m</strong></div>
+        </div>
+      }
+    </aside>
+  </div>
+
+  <footer class="app-footer"><span>◈ TEMPORAL GIS / PROOF OF CONCEPT</span><span>Satellite: Esri World Imagery Wayback with static polygons. Images and Load test: synthetic data.</span></footer>
+</div>

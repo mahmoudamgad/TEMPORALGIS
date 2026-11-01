@@ -1,0 +1,36 @@
+{
+ "xmin": 3525589.919094547,
+ "ymin": 3501401.8401472424,
+ "xmax": 3525828.1876435815,
+ "ymax": 3501640.7058605603,
+ "wkid": 102100,
+ "width": 798,
+ "height": 800,
+ "zoom": 19,
+ "center": [
+  31.6719833,
+  29.9842172
+ ],
+ "captures": [
+  {
+   "epoch": 202206,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\vya-202206.png"
+  },
+  {
+   "epoch": 202308,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\vya-202308.png"
+  },
+  {
+   "epoch": 202408,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\vya-202408.png"
+  },
+  {
+   "epoch": 202509,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\vya-202509.png"
+  },
+  {
+   "epoch": 202609,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\vya-202609.png"
+  }
+ ]
+}

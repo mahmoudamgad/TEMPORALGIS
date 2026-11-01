@@ -1,0 +1,36 @@
+{
+ "xmin": 3525359.124581249,
+ "ymin": 3499526.746162034,
+ "xmax": 3526192.7659209142,
+ "ymax": 3500362.7761588325,
+ "wkid": 102100,
+ "width": 698,
+ "height": 700,
+ "zoom": 17,
+ "center": [
+  31.6725842,
+  29.9719498
+ ],
+ "captures": [
+  {
+   "epoch": 201801,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\plant-201801.png"
+  },
+  {
+   "epoch": 201910,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\plant-201910.png"
+  },
+  {
+   "epoch": 202007,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\plant-202007.png"
+  },
+  {
+   "epoch": 202102,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\plant-202102.png"
+  },
+  {
+   "epoch": 202206,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\plant-202206.png"
+  }
+ ]
+}
