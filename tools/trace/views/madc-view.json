@@ -1,0 +1,36 @@
+{
+ "xmin": 4409682.830056786,
+ "ymin": 2810124.9128512195,
+ "xmax": 4411352.50139339,
+ "ymax": 2811796.972844957,
+ "wkid": 102100,
+ "width": 1398,
+ "height": 1400,
+ "zoom": 17,
+ "center": [
+  39.6203543,
+  24.4714374
+ ],
+ "captures": [
+  {
+   "epoch": 201801,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madc-201801.png"
+  },
+  {
+   "epoch": 202306,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madc-202306.png"
+  },
+  {
+   "epoch": 202503,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madc-202503.png"
+  },
+  {
+   "epoch": 202506,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madc-202506.png"
+  },
+  {
+   "epoch": 202603,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madc-202603.png"
+  }
+ ]
+}

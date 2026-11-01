@@ -1,0 +1,28 @@
+{
+ "xmin": 4410183.551249913,
+ "ymin": 2810638.470232639,
+ "xmax": 4410421.81979902,
+ "ymax": 2810877.3359460304,
+ "wkid": 102100,
+ "width": 798,
+ "height": 800,
+ "zoom": 19,
+ "center": [
+  39.6184231,
+  24.4697773
+ ],
+ "captures": [
+  {
+   "epoch": 202503,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madbus-202503.png"
+  },
+  {
+   "epoch": 202506,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madbus-202506.png"
+  },
+  {
+   "epoch": 202603,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madbus-202603.png"
+  }
+ ]
+}

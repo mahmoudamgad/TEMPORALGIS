@@ -1,9 +1,31 @@
-// Run against: npx ng serve --port 4217
+// Run against: npx ng serve --port 4217 (or pass another URL: node smoke.mjs http://localhost:4200/)
 import { open, sleep } from './harness.mjs';
-const page = await open('http://localhost:4217/');
+const page = await open(process.argv[2] ?? 'http://localhost:4217/');
 const report = (k, v) => console.log(k.padEnd(34), typeof v === 'string' ? v : JSON.stringify(v));
 const scales = `({left: Math.round(app.panes.left.view.scale), right: Math.round(app.panes.right.view.scale)})`;
 try {
+  // Satellite is the default scene: it opens on the 3-month window Mar -> Jun 2025.
+  report('satellite 2d idle ms', await page.idle());
+  report('satellite default window', await page.evaluate(`({ left: app.leftEpoch(), right: app.rightEpoch(), changes: app.changes().length })`));
+  await page.shot('smoke-satellite-2d.png');
+  // Timeline Baseline toggle: a click sets the left map; Comparison sets the right one.
+  report('baseline then comparison', await page.evaluate(`(() => {
+    app.timelineTarget.set('left'); app.pickTimelineEpoch(202206); const left = app.leftEpoch();
+    app.timelineTarget.set('right'); app.pickTimelineEpoch(202306); const right = app.rightEpoch();
+    return { left, right };
+  })()`));
+  // Play advances the comparison map one imagery stop every 1.8 s.
+  await page.evaluate(`app.togglePlay(); 1`);
+  await sleep(4000);
+  report('play after 4 s', await page.evaluate(`(() => { const r = { playing: app.playing(), right: app.rightEpoch() }; app.togglePlay(); return r; })()`));
+  await page.evaluate(`app.setEpoch('left', 202503); app.setEpoch('right', 202506); 1`);
+  await page.evaluate(`app.setMode('3d'); 1`);
+  report('satellite 3d idle ms', await page.idle());
+  await page.shot('smoke-satellite-3d.png');
+  await page.evaluate(`app.setMode('2d'); 1`);
+  await page.idle();
+
+  await page.evaluate(`app.setScene('images')`);
   report('images 2d idle ms', await page.idle());
   await page.shot('smoke-images-2d.png');
 
@@ -22,7 +44,8 @@ try {
   // The Added filter must also filter polygons on the map.
   report('overlay all', await page.evaluate(`app.panes.left.overlay.graphics.length`));
   await page.evaluate(`app.setFilter('added'); 1`);
-  report('overlay added only', await page.evaluate(`({ count: app.panes.left.overlay.graphics.length, expected: app.count().added })`));
+  // The map draws every change of the period that passes the filter; the sidebar counts only those in view.
+  report('overlay added only', await page.evaluate(`({ count: app.panes.left.overlay.graphics.length, expected: app.mapChanges().length + app.mapChanges().filter(c => c.kind === 'modified').length })`));
   await page.evaluate(`app.setFilter('all'); 1`);
 
   // Epoch change: backdrop and building filter.
@@ -40,10 +63,6 @@ try {
   await page.shot('smoke-images-3d.png');
   await page.evaluate(`app.setMode('2d'); 1`);
   await page.idle();
-
-  await page.evaluate(`app.setScene('satellite')`);
-  report('satellite 2d idle ms', await page.idle());
-  await page.shot('smoke-satellite-2d.png');
 
   const t0 = Date.now();
   await page.evaluate(`app.setScene('loadtest')`);

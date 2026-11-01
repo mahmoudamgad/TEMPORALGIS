@@ -1,0 +1,56 @@
+{
+ "xmin": 4409084.470382774,
+ "ymin": 2809169.4509751196,
+ "xmax": 4412423.813055983,
+ "ymax": 2812513.5709625953,
+ "wkid": 102100,
+ "width": 1398,
+ "height": 1400,
+ "zoom": 16,
+ "center": [
+  39.6224786,
+  24.4704609
+ ],
+ "captures": [
+  {
+   "epoch": 201801,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-201801.png"
+  },
+  {
+   "epoch": 201803,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-201803.png"
+  },
+  {
+   "epoch": 201912,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-201912.png"
+  },
+  {
+   "epoch": 202010,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202010.png"
+  },
+  {
+   "epoch": 202104,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202104.png"
+  },
+  {
+   "epoch": 202206,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202206.png"
+  },
+  {
+   "epoch": 202306,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202306.png"
+  },
+  {
+   "epoch": 202503,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202503.png"
+  },
+  {
+   "epoch": 202506,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202506.png"
+  },
+  {
+   "epoch": 202603,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\mad-202603.png"
+  }
+ ]
+}

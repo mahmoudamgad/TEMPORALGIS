@@ -17,7 +17,7 @@ npm start
 ## What to demo
 
 1. **Source** picks the data shown on both maps:
-   - `Satellite` (default): real Esri World Imagery Wayback imagery over about 3 × 3 km, with 44 change polygons traced by hand: building progress, new buildings, new roads, earthworks, vehicles and demolitions. Any month from Jan 2018 to Sep 2026 can be picked; each shows the latest imagery up to it, and the timeline marks the 10 months with new imagery.
+   - `Satellite` (default): real Esri World Imagery Wayback imagery over about 3 × 3 km of Al Madinah (Bani Muawiyah, east of the Prophet's Mosque), with 32 change polygons traced by hand: building progress, new buildings, roads, earthworks, vehicles and demolitions. Any month from Jan 2018 to Mar 2026 can be picked; each shows the latest imagery up to it, and the timeline marks the 10 months with new imagery. It opens on the 3-month window Mar → Jun 2025.
    - `Images`: five self-generated georeferenced raster images with 105 synthetic buildings.
    - `Load test 20K`: 20,000 synthetic buildings with 30–100 vertices each, over OpenStreetMap, with an FPS readout.
 2. Pan/zoom/rotate either map: the other follows, including mouse-wheel zoom.

@@ -1,10 +1,10 @@
 # Handoff: Temporal GIS POC
 
-Last updated: 2026-11-01, after tracing 44 real change polygons on `Satellite`. The build and all three data tests pass.
+Last updated: 2026-11-01, after moving the `Satellite` area to Al Madinah and re-tracing its changes. Build, all three data tests and the headless smoke test pass (except the known 3D load-test timeout).
 
-**Start here:** the POC is demo-ready on `Satellite`. Open items are under "Next steps". The biggest risk left is 3D performance on the 20K load test.
+**Start here:** the POC is demo-ready on `Satellite`, opening on a real 3-month comparison. Open items are under "Next steps". The biggest risk left is 3D performance on the 20K load test, which needs a real GPU.
 
-The user often writes in Egyptian Arabic but has asked for answers in English. They stressed that this is **just a POC**: keep changes simple.
+The user often writes in Egyptian Arabic but has asked for answers in English. They stressed that this is **just a POC**: keep changes simple. They plan to pitch it to a client as a software company.
 
 ## Goal
 
@@ -15,7 +15,7 @@ A small frontend-only Angular + Esri ArcGIS POC, to win approval before any back
 - Highlights what changed in the current view with transparent polygons, using graphics layers.
 - Compares many epochs, picked by **month and year**. A 3-month comparison should show changes.
 - Changes spread over several areas within a few km, so panning shows new ones.
-- Change kinds include building progress, new buildings, new roads and vehicles.
+- Change kinds include building progress, new buildings, new roads, vehicles and demolitions.
 - Handles very high geometry.
 
 ## Decisions already made by the user
@@ -27,80 +27,73 @@ Do not reopen these.
 | Data | Static, drawn or prepared by the agent, at an acceptable accuracy |
 | Change detection | None. Changes are static metadata. No backend |
 | "High geometry" | Both many buildings and many vertices per polygon. Target: about 20,000 buildings with 30–100 vertices each |
-| Imagery | Real imagery is preferred, using Esri Wayback |
+| Imagery | Real imagery, using Esri Wayback |
 | Many epochs | Two maps, with any two dates picked from a timeline. Not 3–4 maps at once |
 | Epoch granularity | The user picks **month and year**. Epochs are `YYYYMM` integers everywhere |
-| Area | A few km, not more. The demo area east of Cairo, centered near `31.679, 29.9805`, dates 2018–2026 |
+| Area | **Al Madinah al Munawwarah**, Bani Muawiyah, from the user's Google Maps link: `39.6224786, 24.4704609`. About 3 × 3 km. (The earlier east-Cairo area is in git history, commit `b9401ae`.) |
+| Git | The user set up the repo. Push straight to `main` at https://github.com/mahmoudamgad/TEMPORALGIS, when the user asks |
 
 ## Current state
 
-Git repository on `main`, tracking `origin` = https://github.com/mahmoudamgad/TEMPORALGIS. The first commit `df9848d` (the whole POC with the 44 polygons) is pushed. The user asked to push straight to `main`. `node_modules`, `dist` and `.angular` are ignored by `.gitignore`.
+Git repository on `main`, tracking `origin`. Pushed: `df9848d` (whole POC, Cairo area) and `b9401ae` (Wayback level cap). The Madinah move and everything after it are **not committed yet** unless the log says otherwise.
 
 ### Done
 
-- **`Satellite` is the default source**, comparing Jun 2022 with Sep 2026 at zoom 15.5.
-- **44 real change polygons** in `REAL_FEATURES` (`src/app/real-data.ts`), traced over Wayback imagery across about 2.9 × 2.9 km:
-  - 13 `Construction` (building progress: several revisions with growing height, e.g. the central plot goes graded → foundations → structure → finished from Nov 2022 to Sep 2025).
-  - 10 `Building`, 11 `Road`, 5 `Earthwork`, 5 `Vehicles` (parked trucks and cars traced at zoom 19).
-  - Two demolitions (a pond and stockpiles at an old plant, gone by Jul 2020) and one vehicle that left.
-  - Areas: residential compound (NW), logistics park, a new road district (NE), data centre and interchange (SE), factory plots and an industrial compound (SW).
-  - Every change is dated to the **first imagery month that shows it**. Every imagery update has at least one change.
-  - Accuracy: corners read from gridded screenshots, roughly ±5–20 m. Overlay checked at zoom 16 and at zoom 19 for the industrial compound: all polygons sit on their objects. The user should still review them.
-- **Imagery months vs pickable months** (`SceneConfig.epochs` and `SceneConfig.stops`):
-  - All zoom-16 tiles of the ~3 km area change together at exactly 10 Wayback releases: Jan 2018, Oct 2019, Jul 2020, Feb 2021, Jun 2022, Nov 2022, Aug 2023, Aug 2024, Sep 2025, Sep 2026. Those are the timeline stops (`REAL_IMAGERY`).
-  - Every month Jan 2018 – Sep 2026 can be picked (`REAL_EPOCHS`). A month shows the latest imagery up to it (`stopOf`), and the map footer names that imagery date.
-  - So a 3-month window shows changes only if an imagery update falls in it. Examples: Jun → Sep 2026 gives 8, Aug → Nov 2022 gives 10, Apr → Jul 2022 gives 4, Jan → Apr 2023 gives 0. The shortest gap between updates here is 5 months; free Wayback imagery cannot do better at this spot.
-  - Zoom-15 tiles refresh on a different schedule from zoom 16, so they are not a reliable change test.
-- Sidebar shows "N of M changes in view"; when all are off-screen, the empty list says so and suggests zooming out.
-- Categories `Building | Construction | Road | Vehicles | Earthwork` were added to `Category` in `demo-data.ts`.
-- Month + year epochs everywhere: Month and Year selects per map (months with no epoch disabled), month-labelled timeline. `Images` epochs `201603, 201911, 202206, 202402, 202608`; `Load test` epochs `201801, 202003, 202206, 202409, 202607`.
-- Three-way **Source** control: `Satellite`, `Images` (synthetic PNGs, 105 buildings), `Load test 20K` (20,000 buildings, 1,397,560 vertices, `public/data/load-test.json`, ~33 MB).
-- Buildings render through one client-side `FeatureLayer` (one row per building version; switching epoch changes `definitionExpression`). Change highlights are in a `GraphicsLayer` with cached symbols.
-- Earlier fixes: wheel-zoom sync, filters apply to the map, ghosts for footprints missing in a map's epoch, change list capped at 200 rows, FPS badge in the load test.
+- **`Satellite` is the default source**, opening on **Mar 2025 → Jun 2025** (a real 3-month window with its own imagery update) at zoom 15.5.
+- **Madinah imagery**: all zoom-16 tiles of the ~3 km area change together at exactly 10 Wayback releases: Jan 2018, Mar 2018, Dec 2019, Oct 2020, Apr 2021, Jun 2022, Jun 2023, **Mar 2025, Jun 2025**, Mar 2026. These are the timeline stops (`REAL_IMAGERY`). Every month from Jan 2018 to Mar 2026 can be picked (`REAL_EPOCHS`, derived from the first and last stop); a month shows the latest imagery up to it.
+- **32 real change polygons** in `REAL_FEATURES`, mostly the large redevelopment project east of the Prophet's Mosque:
+  - 10 `Construction` with progress revisions: the north–south spine tunnel (graded Jun 2022 → trench Jun 2023 → structure Mar 2025 → roofed Jun 2025), three cross-structures, a pit grid, two towers, a northern construction site.
+  - 8 `Building`, 5 `Earthwork`, 2 `Road`, 7 `Vehicles` (dump trucks, parked cars, coaches, excavators, an equipment yard; traced at zoom 19 for the bus park).
+  - 8 removals: demolished residential blocks west of the highway (gone by Mar 2025), houses, tents, a hall, the old ring-road arc, a filled-in excavation, dump trucks that left.
+  - Areas: project core, the cleared blocks west of the highway, the north construction site, the northern tunnel works, the camps.
+- **Change counts**: Mar → Jun 2025: 18 (9 added, 2 removed, 7 modified); Dec 2025 → Mar 2026: 4; Jan 2018 → Mar 2026: 30. Mar 2018 and Oct 2020 show no traced change: nothing confirmable at this scale. `verify_real_data.py` allows that (at least 7 of 9 updates must have changes).
+- Each Wayback release has a `maxLevel` (17 for Jan 2018, 19 for the rest at Madinah); the `WebTileLayer` `tileInfo` uses it, so close-ups upsample instead of hitting tiles that fail CORS. `MapView` gets explicit `constraints.lods`.
+- Map attribution now reads "Esri, Vantor, Earthstar Geographics, and the GIS User Community" (Maxar's new name), as the Wayback items require.
+- Sidebar shows "N of M changes in view"; when all are off-screen, the empty list says so.
+- Month and Year selects per map, month-labelled timeline with change counts, Baseline/Comparison toggle, Play.
+- `Images` (synthetic, 105 buildings) and `Load test 20K` (20,000 buildings, 1,397,560 vertices) sources are unchanged.
 
 ### Verified
 
-On 2026-11-01, in the desktop app's browser pane (dev server on 4200), on the final code:
+On 2026-11-01, on the final code:
 
-- `ng build` exits 0. `verify_demo_data.py`, `verify_load_test.py` and `verify_real_data.py` pass.
-- `Satellite` loads by default in 2D and 3D. Jun 2022 → Sep 2026: 29 changes, 18 in the default view. The 3D overlay draws all 29.
-- The change counts above for 3-month windows, from the running app.
-- 2D zoomed to level 19 on the industrial compound: no console errors.
-- **Wayback CORS errors fixed.** Probing showed level 17 works for every release, levels 18–19 of the Jan 2018 and Oct 2019 releases answer with a 301 to a URL without CORS headers, and level 20 is a 404 everywhere. Each release now has `maxLevel` (17 or 19) in `WAYBACK_RELEASES`, used as the `WebTileLayer` `tileInfo`, so deeper views upsample. `MapView` gets explicit `constraints.lods`, otherwise the first backdrop (Jan 2018, level 17) would cap 2D zoom. In a fresh tab, Jan 2018 vs Oct 2019 in a low 3D close-up and then 2D at levels 19 and 20 gave zero console errors, and both maps showed imagery.
+- `ng build` exits 0. `verify_demo_data.py`, `verify_load_test.py`, `verify_real_data.py` pass.
+- Overlay screenshots of the whole area (Jan 2018 vs Mar 2026) and of the project core (Mar → Jun 2025): every polygon sits on its object; removals show as dashed ghosts.
+- Headless smoke test (`node tools/browser-check/smoke.mjs http://localhost:4200/`): Satellite default window has 18 changes; Baseline and Comparison clicks set the right map; Play advanced two stops in 4 s; Satellite 3D loaded; wheel-zoom sync works; **0 console errors**; the only failed request is `favicon.ico`. It then timed out on `Load test` 3D, as before.
+- In the browser pane: Play wraps from the last stop to the first; Pause stops it in place.
+- Wayback licence: every release item says "licensed under the Esri Master License Agreement", attribution as above, not for offline tile export. For a commercial product the client needs an Esri licence (ArcGIS Location Platform, ArcGIS Online or Enterprise); confirm with Esri.
 
 ### Not verified / known issues
 
-- Switching 2D/3D while a view is still loading can log `FeatureSourceEventLog` tile errors from the destroyed view. Not seen when switching after load.
-- **`Load test` in 3D never reached idle within 120 s** on SwiftShader. No real-GPU numbers exist yet.
-- `tools/browser-check/smoke.mjs` was updated for month epochs but not re-run. It still assumes `Images` is the default scene.
-- Play and the timeline Baseline toggle have not been exercised. 3D ghost symbols have not been looked at.
-- Esri Wayback terms of use have not been checked.
+- **`Load test` in 3D never reached idle** on SwiftShader (smoke test timeout). No real-GPU numbers.
+- Polygons are traced by eye, roughly ±5–20 m. The user has not reviewed them yet.
+- Switching 2D/3D while a view is still loading can log `FeatureSourceEventLog` errors from the destroyed view.
+- 3D ghost symbols have not been looked at closely.
 
 ## Next steps
 
-1. **Test the load test on a real GPU** in 2D and 3D, using the FPS badge. If 3D is too slow, the first levers are fewer highlights and a lower `qualityProfile`.
-2. **Update `smoke.mjs`** for `Satellite` as the default scene, and re-run it.
-3. **Check** Play and the Baseline toggle.
-4. **Check Wayback terms of use** and tell the user the result.
-5. If the user reviews the polygons and wants changes, edit `tools/trace/traced.json` and regenerate (below).
+1. **Commit and push** the Madinah move when the user asks.
+2. **Test the load test on a real GPU** in 2D and 3D, using the FPS badge (the user's machine).
+3. **User reviews the polygons**; adjust `tools/trace/traced.json` and regenerate.
+4. Before the client demo: rehearse; present it as the visualisation and review layer, with detection, imagery licensing and monthly imagery as phase 2.
 
 ### How polygons were traced (`tools/trace/`)
 
-- `capture.mjs <config.json>` opens the app in headless Chrome, switches to `Satellite`, sets the right map to each epoch in `config.epochs`, overlays a 50 px grid and saves a screenshot plus `<prefix>-view.json` (the view extent). Config: `{ center: [lon, lat], zoom, epochs, prefix, size, grid, changes }`. It needs the dev server on 4200 (or `url`). **Do not edit `src/` while it runs**: the dev server reloads the page and the capture fails with `app is not defined`.
-- `traced.json` holds every feature in screenshot pixels, each revision pointing at its capture's view file in `views/`. Shapes: `px` (corners), `rect` (`[cx, cy, length, width, angleDeg]`) or `line` + `width` (roads).
-- `convert.mjs traced.json out.json` turns pixels into closed, clockwise WGS84 rings. Paste the result into `REAL_FEATURES`, then run `tests/verify_real_data.py`.
-- Captures used: the whole area at zoom 16 (1400 px) for all 10 imagery months to date changes, zoom-17 close-ups for tracing, and zoom 19 for vehicles.
+- `capture.mjs <config.json>` opens the app in headless Chrome, switches to `Satellite`, sets the right map to each epoch in `config.epochs`, overlays a 50 px grid and saves a screenshot plus `<prefix>-view.json`. Config: `{ center: [lon, lat], zoom, epochs, prefix, size, grid, changes }`. The epochs must be months the app knows, so update `WAYBACK_RELEASES` first when moving the area. **Do not edit `src/` while it runs**: the dev server reloads the page and the capture fails with `app is not defined`.
+- `traced.json` holds every feature in screenshot pixels; each revision points at a view file in `views/` (`mad` zoom 16 area, `madc` project core and `madnw` west side at zoom 17, `madbus` bus park at zoom 19). Shapes: `px`, `rect` (`[cx, cy, length, width, angleDeg]`) or `line` + `width`.
+- `convert.mjs traced.json out.json` turns pixels into closed, clockwise WGS84 rings. Paste into `REAL_FEATURES`, then run `tests/verify_real_data.py`.
+- To find imagery months for a new area: hash every zoom-16 tile of the area for each release in `waybackconfig.json` and keep releases where tiles change (zoom 15 refreshes on a different schedule, so it is not a reliable test). Then probe levels 17–20 per release for 200 vs 301/404 to set `maxLevel`.
 
 ## Things to watch
 
 - Wayback dates are **release** dates, not capture dates.
-- The full release list is at `https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json`. A tile-hash difference can be a small reprocessing rather than new capture.
-- This machine has no Python on PATH. Run the tests with `uv run --no-project --with pillow python tests/<file>.py` (uv is in `~/.local/bin`).
-- `npm ci` rejected the lockfile; `npm install` worked and updated `package-lock.json` slightly.
-- `DEMO_ROADS` and `DEMO_PARKS` are no longer used by the app, but `tests/verify_demo_data.py` matches on the `DEMO_PARKS` export. Do not remove it without updating the test.
-- `load-test.json` is copied into `dist` on every build. Regenerate it with `node tools/generate-load-test.mjs`; output is deterministic.
+- Release list: `https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json`.
+- This machine has no Python on PATH. Run tests with `uv run --no-project --with pillow python tests/<file>.py` (uv is in `~/.local/bin`).
+- `npm ci` rejected the lockfile; `npm install` worked.
+- `DEMO_ROADS` and `DEMO_PARKS` are unused by the app, but `tests/verify_demo_data.py` matches on `DEMO_PARKS`.
+- `load-test.json` is copied into `dist` on every build. Regenerate with `node tools/generate-load-test.mjs`.
 - The `app` and `ng` globals exist only in dev builds.
-- The user watches a dev server on port 4200 (their own, or one started from `.claude/launch.json` in the desktop app's browser pane). It hot-reloads edits. Leave it alone.
+- The user watches a dev server on port 4200 (`.claude/launch.json` in the desktop app's browser pane). It hot-reloads edits. Leave it alone.
 - Run long jobs in the background and wait for the result.
 
 ## Key files
@@ -109,11 +102,10 @@ On 2026-11-01, in the desktop app's browser pane (dev server on 4200), on the fi
 |---|---|
 | `src/app/app.component.ts` | Views, sync, layers, symbols, comparison logic, UI state, `SCENES` |
 | `src/app/app.component.html` | UI |
-| `src/app/real-data.ts` | Wayback releases, `REAL_IMAGERY`, `REAL_EPOCHS`, `REAL_FEATURES` |
+| `src/app/real-data.ts` | Madinah Wayback releases, `REAL_IMAGERY`, `REAL_EPOCHS`, `REAL_CENTER`, `REAL_FEATURES` |
 | `src/app/demo-data.ts` | Synthetic 105 buildings for `Images`, shared types |
 | `public/data/load-test.json` | 20,000 synthetic buildings |
 | `tools/trace/` | Capture, traced pixel shapes and converter for `REAL_FEATURES` |
-| `tools/generate-load-test.mjs` | Regenerates the load-test data |
 | `tools/browser-check/` | Headless Chrome driver and smoke test, no dependencies |
 | `tests/` | Offline data checks |
 
@@ -125,5 +117,6 @@ npm run build
 uv run --no-project --with pillow python tests/verify_demo_data.py
 uv run --no-project python tests/verify_load_test.py
 uv run --no-project python tests/verify_real_data.py
+node tools/browser-check/smoke.mjs http://localhost:4200/
 node tools/trace/convert.mjs tools/trace/traced.json out.json
 ```

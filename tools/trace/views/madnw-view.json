@@ -1,0 +1,24 @@
+{
+ "xmin": 4408607.929053686,
+ "ymin": 2810960.9497166555,
+ "xmax": 4410277.60039029,
+ "ymax": 2812633.009710393,
+ "wkid": 102100,
+ "width": 1398,
+ "height": 1400,
+ "zoom": 17,
+ "center": [
+  39.6106983,
+  24.4782728
+ ],
+ "captures": [
+  {
+   "epoch": 202503,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madnw-202503.png"
+  },
+  {
+   "epoch": 202506,
+   "file": "C:\\Users\\mahmo\\AppData\\Local\\Temp\\temporal-gis-browser-check\\madnw-202506.png"
+  }
+ ]
+}

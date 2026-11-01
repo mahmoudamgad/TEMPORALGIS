@@ -51,7 +51,7 @@ const epochLabel = (epoch: number) => `${MONTHS[monthOf(epoch) - 1]} ${yearOf(ep
 const LOAD_TEST_EPOCHS = [201801, 202003, 202206, 202409, 202607] as const;
 
 const SCENES: Record<Scene, SceneConfig> = {
-  satellite: { label: 'WAYBACK SATELLITE', epochs: REAL_EPOCHS, stops: REAL_IMAGERY, center: REAL_CENTER, zoom: 15.5, left: 202206, right: 202609 },
+  satellite: { label: 'WAYBACK SATELLITE', epochs: REAL_EPOCHS, stops: REAL_IMAGERY, center: REAL_CENTER, zoom: 15.5, left: 202503, right: 202506 },
   images: { label: 'SYNTHETIC AERIAL', epochs: DEMO_EPOCHS, stops: DEMO_EPOCHS, center: DEMO_CENTER, zoom: 16, left: 201911, right: 202608 },
   loadtest: { label: 'SYNTHETIC LOAD TEST', epochs: LOAD_TEST_EPOCHS, stops: LOAD_TEST_EPOCHS, center: DEMO_CENTER, zoom: 13.5, left: 202003, right: 202607 }
 };
@@ -325,7 +325,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       urlTemplate: `${WAYBACK_TILES}/${release.id}/{level}/{row}/{col}`,
       // Never request levels the release cannot serve; closer views upsample the deepest level.
       tileInfo: TileInfo.create({ numLODs: release.maxLevel + 1 }),
-      copyright: 'Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+      copyright: 'Esri, Vantor, Earthstar Geographics, and the GIS User Community'
     });
   }
 
