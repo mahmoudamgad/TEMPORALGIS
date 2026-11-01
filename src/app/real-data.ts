@@ -4,17 +4,19 @@ import type { DemoFeature } from './demo-data';
 // Only releases whose tiles differ from the previous release are listed, at most one per month.
 // Found by hashing all zoom-16 tiles of a ~3 km area around REAL_CENTER for every release from 2018 to 2026-10:
 // the whole area changed at these ten releases and at no others.
-export const WAYBACK_RELEASES: Record<number, { id: number; date: string }> = {
-  201801: { id: 10768, date: '2018-01-31' },
-  201910: { id: 11351, date: '2019-10-09' },
-  202007: { id: 18289, date: '2020-07-01' },
-  202102: { id: 9812, date: '2021-02-24' },
-  202206: { id: 44710, date: '2022-06-08' },
-  202211: { id: 7110, date: '2022-11-02' },
-  202308: { id: 17632, date: '2023-08-10' },
-  202408: { id: 32553, date: '2024-08-15' },
-  202509: { id: 52304, date: '2025-09-04' },
-  202609: { id: 63116, date: '2026-09-24' }
+// `maxLevel` is the deepest tile level the release serves with CORS headers: deeper tiles of the first two
+// releases redirect to a URL without them, and no release has level 20. The layer upsamples beyond it.
+export const WAYBACK_RELEASES: Record<number, { id: number; date: string; maxLevel: number }> = {
+  201801: { id: 10768, date: '2018-01-31', maxLevel: 17 },
+  201910: { id: 11351, date: '2019-10-09', maxLevel: 17 },
+  202007: { id: 18289, date: '2020-07-01', maxLevel: 19 },
+  202102: { id: 9812, date: '2021-02-24', maxLevel: 19 },
+  202206: { id: 44710, date: '2022-06-08', maxLevel: 19 },
+  202211: { id: 7110, date: '2022-11-02', maxLevel: 19 },
+  202308: { id: 17632, date: '2023-08-10', maxLevel: 19 },
+  202408: { id: 32553, date: '2024-08-15', maxLevel: 19 },
+  202509: { id: 52304, date: '2025-09-04', maxLevel: 19 },
+  202609: { id: 63116, date: '2026-09-24', maxLevel: 19 }
 };
 // Months with new imagery. They are the timeline stops, and every change is dated to the first of them that shows it.
 export const REAL_IMAGERY: readonly number[] = Object.keys(WAYBACK_RELEASES).map(Number).sort((a, b) => a - b);

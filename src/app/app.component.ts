@@ -13,6 +13,7 @@ import MediaLayer from '@arcgis/core/layers/MediaLayer.js';
 import OpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer.js';
 import WebTileLayer from '@arcgis/core/layers/WebTileLayer.js';
 import ImageElement from '@arcgis/core/layers/support/ImageElement.js';
+import TileInfo from '@arcgis/core/layers/support/TileInfo.js';
 import ExtentAndRotationGeoreference from '@arcgis/core/layers/support/ExtentAndRotationGeoreference.js';
 import SimpleRenderer from '@arcgis/core/renderers/SimpleRenderer.js';
 import SizeVariable from '@arcgis/core/renderers/visualVariables/SizeVariable.js';
@@ -237,7 +238,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         map.addMany([buildings, overlay]);
         const container = side === 'left' ? this.leftCanvas.nativeElement : this.rightCanvas.nativeElement;
         const view: GISView = this.mode() === '2d'
-          ? new MapView({ container, map, center, zoom, constraints: { snapToZoom: false } })
+          // Explicit LODs, so the view is not limited to the levels of whichever backdrop comes first.
+          ? new MapView({ container, map, center, zoom, constraints: { snapToZoom: false, lods: TileInfo.create().lods } })
           : new SceneView({ container, map, qualityProfile: 'medium',
               camera: new Camera({ position: { x: center[0], y: center[1] - 0.012 * zoomFactor,
                 z: 1450 * zoomFactor, spatialReference: { wkid: 4326 } }, heading: 0, tilt: 58 }) });
@@ -321,6 +323,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       title: `World Imagery Wayback ${release.date}`,
       visible: false,
       urlTemplate: `${WAYBACK_TILES}/${release.id}/{level}/{row}/{col}`,
+      // Never request levels the release cannot serve; closer views upsample the deepest level.
+      tileInfo: TileInfo.create({ numLODs: release.maxLevel + 1 }),
       copyright: 'Esri, Maxar, Earthstar Geographics, and the GIS User Community'
     });
   }

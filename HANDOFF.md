@@ -34,7 +34,7 @@ Do not reopen these.
 
 ## Current state
 
-Not a git repository, so nothing is committed. `node_modules`, `dist` and `.angular` are ignored by `.gitignore`.
+Git repository on `main`, tracking `origin` = https://github.com/mahmoudamgad/TEMPORALGIS. The first commit `df9848d` (the whole POC with the 44 polygons) is pushed. The user asked to push straight to `main`. `node_modules`, `dist` and `.angular` are ignored by `.gitignore`.
 
 ### Done
 
@@ -66,10 +66,11 @@ On 2026-11-01, in the desktop app's browser pane (dev server on 4200), on the fi
 - `Satellite` loads by default in 2D and 3D. Jun 2022 → Sep 2026: 29 changes, 18 in the default view. The 3D overlay draws all 29.
 - The change counts above for 3-month windows, from the running app.
 - 2D zoomed to level 19 on the industrial compound: no console errors.
+- **Wayback CORS errors fixed.** Probing showed level 17 works for every release, levels 18–19 of the Jan 2018 and Oct 2019 releases answer with a 301 to a URL without CORS headers, and level 20 is a 404 everywhere. Each release now has `maxLevel` (17 or 19) in `WAYBACK_RELEASES`, used as the `WebTileLayer` `tileInfo`, so deeper views upsample. `MapView` gets explicit `constraints.lods`, otherwise the first backdrop (Jan 2018, level 17) would cap 2D zoom. In a fresh tab, Jan 2018 vs Oct 2019 in a low 3D close-up and then 2D at levels 19 and 20 gave zero console errors, and both maps showed imagery.
 
 ### Not verified / known issues
 
-- **3D close-ups log CORS errors** for some Wayback tiles at levels 19–20: those tiles redirect to another release without CORS headers, so they stay blank. Switching 2D/3D while loading also logs `FeatureSourceEventLog` tile errors. 2D use is clean. A likely fix is capping the Wayback `WebTileLayer` at level 19 (or 18) through its `tileInfo`.
+- Switching 2D/3D while a view is still loading can log `FeatureSourceEventLog` tile errors from the destroyed view. Not seen when switching after load.
 - **`Load test` in 3D never reached idle within 120 s** on SwiftShader. No real-GPU numbers exist yet.
 - `tools/browser-check/smoke.mjs` was updated for month epochs but not re-run. It still assumes `Images` is the default scene.
 - Play and the timeline Baseline toggle have not been exercised. 3D ghost symbols have not been looked at.
@@ -78,7 +79,7 @@ On 2026-11-01, in the desktop app's browser pane (dev server on 4200), on the fi
 ## Next steps
 
 1. **Test the load test on a real GPU** in 2D and 3D, using the FPS badge. If 3D is too slow, the first levers are fewer highlights and a lower `qualityProfile`.
-2. **Fix the 3D CORS tile errors** (cap the Wayback layer's LODs) and update `smoke.mjs` for `Satellite` as default; re-run it.
+2. **Update `smoke.mjs`** for `Satellite` as the default scene, and re-run it.
 3. **Check** Play and the Baseline toggle.
 4. **Check Wayback terms of use** and tell the user the result.
 5. If the user reviews the polygons and wants changes, edit `tools/trace/traced.json` and regenerate (below).
